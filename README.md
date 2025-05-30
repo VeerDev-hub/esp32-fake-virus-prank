@@ -15,7 +15,7 @@ This project turns your ESP32 into a fake “Hacked” WiFi access point, comple
 •	  Locked screen (no back, zoom, scroll, context menu)
 🔧 Getting Started
 1. Clone or download this repository
-   git clone https://github.com/your-username/esp32-hacked-wifi-prank.git
+   git clone https://github.com/VeerDev-hub/esp32-fake-virus-prank.git
    Or download the ZIP and extract it.
 2. Libraries
    ✅ All required libraries are included in the folder named libraries. Just copy this folder into your Arduino libraries/ directory OR use PlatformIO which automatically includes local libraries.
