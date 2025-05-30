@@ -13,17 +13,14 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
-  // Start WiFi AP
   WiFi.softAP(ssid);
   IPAddress AP_IP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(AP_IP);
 
-  // Start DNS server to redirect all queries to AP IP
+
   dns.start(53, "*", AP_IP);
 
-  // Setup web server root page
-// (same ESP32 setup as before with AP and DNS server)
 
 server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
   const char* html = R"rawliteral(
@@ -265,23 +262,23 @@ Technical information:
 </div>
 
 <script>
-  // Disable zoom & scroll, block back button, selection, context menu
+
   function lockScreen() {
     ['touchmove', 'gesturestart', 'gesturechange', 'gestureend', 'contextmenu', 'selectstart'].forEach(evt => {
       document.addEventListener(evt, e => e.preventDefault(), { passive: false });
     });
 
-    // Block back button by pushing history states repeatedly
+   
     history.pushState(null, document.title, location.href);
     window.addEventListener('popstate', () => {
       history.pushState(null, document.title, location.href);
     });
 
-    // Lock scroll to top continuously
+   
     window.scrollTo(0, 0);
     window.addEventListener('scroll', () => window.scrollTo(0, 0));
 
-    // Prevent keyboard shortcuts (Ctrl+W, Ctrl+R, Ctrl+Shift+I, F5, etc)
+   
     window.addEventListener('keydown', function(e) {
       const forbiddenKeys = ['w', 'r', 't', 'n', 'Tab', 'F5', 'F12', 'I'];
       if ((e.ctrlKey || e.metaKey) && forbiddenKeys.includes(e.key.toLowerCase())) {
@@ -291,7 +288,7 @@ Technical information:
     });
   }
 
-  // Fullscreen + orientation lock
+  
   async function requestFullScreenAndLockOrientation() {
     try {
       if (!document.fullscreenElement) {
@@ -305,7 +302,7 @@ Technical information:
     }
   }
 
-  // Fake webcam/mic permission popup logic
+  
   function fakePermissions() {
     const popup = document.getElementById('fakePermissionsPopup');
     const overlay = document.getElementById('blockerOverlay');
@@ -319,27 +316,26 @@ Technical information:
 
     allowBtn.onclick = () => {
       closePopup();
-      // After allowing, trigger full screen and orientation lock
+   
       requestFullScreenAndLockOrientation();
       startVirusSequence();
     };
 
     denyBtn.onclick = () => {
-      // Fake "permission denied" message, then close popup after 3 seconds
+      
       popup.innerHTML = "<p><strong>Permission Denied.</strong></p><p>You must allow access to continue.</p>";
       setTimeout(() => {
         closePopup();
-        // Start anyway but with delay and warning
+       
         startVirusSequence(true);
       }, 3000);
     };
 
-    // Show popup and overlay on page load
     popup.style.display = 'block';
     overlay.style.display = 'block';
   }
 
-  // Virus injection progress bar & code scrolling logic
+  
   const codeScroll = document.getElementById('codeScroll');
   const progressBar = document.getElementById('progressBar');
   const errorPopup = document.getElementById('errorPopup');
@@ -347,7 +343,7 @@ Technical information:
   const bsodScreen = document.getElementById('bsodScreen');
   const bsodBeep = document.getElementById('bsodBeep');
 
-  // Sample "virus code" lines - randomized to look believable
+  
   const codeLines = [
     "Injecting payload to kernel.exe ...",
     "Bypassing antivirus...",
@@ -381,52 +377,51 @@ Technical information:
     p.className = 'code-line';
     p.textContent = line;
     codeScroll.appendChild(p);
-    // Keep scroll at bottom
+    
     codeScroll.scrollTop = codeScroll.scrollHeight;
   }
 
-  // Show error popup with text
+  
   function showError(text) {
     errorPopup.textContent = text;
     errorPopup.style.display = 'block';
   }
 
-  // Hide error popup
+ 
   function hideError() {
     errorPopup.style.display = 'none';
   }
 
-  // Main sequence control
+ 
   let progress = 0;
   let intervalId;
   let bsodCountdown = 30; // seconds for countdown
 
   function startVirusSequence(permissionDenied = false) {
-    // Reset states
+    
     progress = 0;
     progressBar.style.width = '0%';
     codeScroll.innerHTML = '';
     hideError();
     countdown.textContent = '';
 
-    // If permission denied, delay start & show warning line
     if (permissionDenied) {
       appendCodeLine("WARNING: Permissions denied - limited functionality.");
     }
 
     intervalId = setInterval(() => {
-      // Increase progress by random 2-5%
+     
       const inc = Math.floor(Math.random() * 4) + 2;
       progress += inc;
       if (progress > 100) progress = 100;
       progressBar.style.width = progress + '%';
 
-      // Append random code lines
+     
       for (let i = 0; i < 3; i++) {
         appendCodeLine(getRandomCodeLine());
       }
 
-      // Random error injection after 50% progress
+
       if (progress > 50 && Math.random() < 0.15) {
         showError("ERROR: Access violation at 0x" + Math.floor(Math.random() * 0xFFFFFFF).toString(16).toUpperCase());
       } else {
@@ -441,7 +436,7 @@ Technical information:
     }, 1000);
   }
 
-  // Countdown timer for BSOD appearance
+ 
   function startCountdownToBSOD() {
     bsodCountdown = 30;
     countdown.textContent = "System crash in: " + bsodCountdown + " seconds";
@@ -454,7 +449,7 @@ Technical information:
         showBSOD();
       } else {
         countdown.textContent = "System crash in: " + bsodCountdown + " seconds";
-        // Play beep every 5 seconds
+        
         if (bsodCountdown % 5 === 0) {
           bsodBeep.play();
         }
@@ -462,13 +457,12 @@ Technical information:
     }, 1000);
   }
 
-  // Show BSOD screen and block everything
+
   function showBSOD() {
     document.body.style.overflow = 'hidden';
     bsodScreen.style.display = 'block';
   }
 
-  // Initialize prank on page load
   window.onload = () => {
     lockScreen();
     fakePermissions();
